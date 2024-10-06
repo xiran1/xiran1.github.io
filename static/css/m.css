@@ -42,11 +42,6 @@ body {
 	background: #ff4b1f;  /* fallback for old browsers */
 	background: -webkit-linear-gradient(to right, #1fddff, #ff4b1f);  /* Chrome 10-25, Safari 5.1-6 */
 	background: linear-gradient(to right, #1fddff, #ff4b1f); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-	/* background: url("https://img.imdodo.com/679e0419e68dead05c216615997c4f90.jpg"); */
-	background-size: cover;
-	background-position: center;
-	margin: 0
 }
 
 article,
