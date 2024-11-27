@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: '文件4.gz', url: '1.gz', type: 'application/gzip' },
         { 
             name: '文件夹1', 
-            url: '1', 
+            url: '', 
             type: 'directory',
             children: [
                 { name: '子文件1.txt', url: '1/子文件1.txt', type: 'text/plain' },
@@ -63,7 +63,7 @@ function getIconForType(type) {
 }
 
 function openFileOptions(url, type, fileName) {
-    var newWindow = window.open('', '_blank');
+    var newWindow = window.open('', '_blank', 'width=600,height=400');
     newWindow.document.write('<html><head><title>' + fileName + ' 选项</title><link rel="stylesheet" href="styles.css"></head><body class="new-window-body">');
     
     newWindow.document.write('<div class="new-window-header">');
@@ -74,8 +74,8 @@ function openFileOptions(url, type, fileName) {
     newWindow.document.write('<div class="content-container" id="content-container">');
     newWindow.document.write('<p>请选择操作：</p>');
     newWindow.document.write('<div class="action-buttons">');
-    newWindow.document.write('<button class="action-button preview-button" onclick="window.opener.openInNewWindow(\'' + url + '\', \'' + type + '\', \'' + fileName + '\')">预览</button>');
-    newWindow.document.write('<button class="action-button download-button" onclick="window.opener.downloadFile(\'' + url + '\', \'' + fileName + '\')">下载</button>');
+    newWindow.document.write('<button class="action-button preview-button" onclick="previewFile(\'' + url + '\', \'' + type + '\', \'' + fileName + '\')">预览</button>');
+    newWindow.document.write('<button class="action-button download-button" onclick="downloadFile(\'' + url + '\', \'' + fileName + '\')">下载</button>');
     newWindow.document.write('</div>');
     newWindow.document.write('</div>');
     
@@ -94,10 +94,11 @@ function openFileOptions(url, type, fileName) {
     newWindow.document.write('<\/script>');
 
     newWindow.document.write('</body></html>');
+    newWindow.document.close();
 }
 
 function openInNewWindow(url, type, fileName, children) {
-    var newWindow = window.open('', '_blank');
+    var newWindow = window.open('', '_blank', 'width=800,height=600');
     newWindow.document.write('<html><head><title>' + fileName + ' 预览</title><link rel="stylesheet" href="styles.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script></head><body class="new-window-body">');
     
     newWindow.document.write('<div class="new-window-header">');
@@ -210,6 +211,7 @@ function openInNewWindow(url, type, fileName, children) {
     newWindow.document.write('<\/script>');
 
     newWindow.document.write('</body></html>');
+    newWindow.document.close();
 }
 
 function renderZipContents(files, container, newWindow) {
