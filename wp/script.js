@@ -64,7 +64,12 @@ function getIconForType(type) {
 
 function openFileOptions(url, type, fileName) {
     var newWindow = window.open('', '_blank', 'width=600,height=400');
-    newWindow.document.write('<html><head><title>' + fileName + ' 选项</title><link rel="stylesheet" href="styles.css"></head><body class="new-window-body">');
+    if (!newWindow) {
+        alert('弹出窗口被阻止，请允许弹出窗口。');
+        return;
+    }
+
+    newWindow.document.write('<!DOCTYPE html><html><head><title>' + fileName + ' 选项</title><link rel="stylesheet" href="styles.css"></head><body class="new-window-body">');
     
     newWindow.document.write('<div class="new-window-header">');
     newWindow.document.write('<div class="new-window-title">' + fileName + '</div>');
@@ -99,7 +104,12 @@ function openFileOptions(url, type, fileName) {
 
 function openInNewWindow(url, type, fileName, children) {
     var newWindow = window.open('', '_blank', 'width=800,height=600');
-    newWindow.document.write('<html><head><title>' + fileName + ' 预览</title><link rel="stylesheet" href="styles.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script></head><body class="new-window-body">');
+    if (!newWindow) {
+        alert('弹出窗口被阻止，请允许弹出窗口。');
+        return;
+    }
+
+    newWindow.document.write('<!DOCTYPE html><html><head><title>' + fileName + ' 预览</title><link rel="stylesheet" href="styles.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script></head><body class="new-window-body">');
     
     newWindow.document.write('<div class="new-window-header">');
     newWindow.document.write('<div class="new-window-title">' + fileName + '</div>');

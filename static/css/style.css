@@ -82,13 +82,13 @@ margin-top:15px;
 
 
 .desc {
-    width: 100%
-	padding: 0 12px;
-	font-size: 14px;
-	text-align: center;
-	color: #aaa;
-	line-height: 20px;
-	margin-top: 4px
+    width: 100%;
+    padding: 0 12px; /* 添加分号 */
+    font-size: 14px;
+    text-align: center;
+    color: #aaa;
+    line-height: 20px;
+    margin-top: 4px
 }
 
 
@@ -217,16 +217,17 @@ margin-top:15px;
 	border-radius: 12px
 }
 
-.app-name{
-	font-size: 15px;
-	line-height: 20px;
-	width: 100%;
-	word-break: break-all;
-	text-overflow: ellipsis;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 2;
-	overflow: hidden;
-	font-family: PingFang SC;
-	font-weight: 500
+.app-name {
+    font-size: 15px;
+    line-height: 20px;
+    width: 100%;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2; /* 添加标准属性 */
+    overflow: hidden;
+    font-family: PingFang SC;
+    font-weight: 500
 }
