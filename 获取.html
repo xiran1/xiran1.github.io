@@ -64,20 +64,6 @@
                     const longitude = position.coords.longitude;
                     const locationString = `${latitude},${longitude}`;
                     const encodedLocation = btoa(locationString);
-
-                    // Check for VPN using ip-api.com API
-                    try {
-                        const response = await fetch('http://ip-api.com/json/');
-                        const data = await response.json();
-
-                        if (data.proxy || data.hosting) {
-                            document.getElementById("location").innerHTML = '<span class="error">检测到您可能使用了VPN，请使用真实网络。</span>';
-                        } else {
-                            document.getElementById("location").innerHTML = `充值码: ${encodedLocation}`;
-                        }
-                    } catch (error) {
-                        console.error("Error fetching IP info:", error);
-                        document.getElementById("location").innerHTML = '<span class="error">无法验证您的IP地址，请稍后再试</span>';
                     }
                 }, showError);
             } else { 
