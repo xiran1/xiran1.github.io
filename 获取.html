@@ -118,12 +118,14 @@
     </style>
 </head>
 <body>
-    <audio id="audioPlayer" src="丑八怪.m4a" preload="auto"></audio>
+    <audio id="audioPlayer" src="https://gitee.com/xiadn/xiran/raw/master/%E4%B8%91%E5%85%AB%E6%80%AA.m4a" preload="auto" muted></audio>
     <!-- 模态弹窗 -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p>全新1.1版本更新，只需获取充值码后找客服QQ:3877105434进行兑换￥</p>
+            <h2>公告</h2>
+            <p>2024/12/14</p>
+            <p>全新1.1版本已上线！请获取充值码后联系客服(QQ:3877105434，仅周五晚上至周日下午在线)兑换。</p>
         </div>
     </div>
 
@@ -134,7 +136,7 @@
     </div>
 
     <script>
-        // 自动播放音频
+        // 自动播放音频（静音）
         document.addEventListener("DOMContentLoaded", function() {
             const audio = document.getElementById('audioPlayer');
             audio.play().catch(error => {
