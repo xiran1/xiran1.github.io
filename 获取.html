@@ -13,6 +13,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            position: relative;
         }
         .container {
             text-align: center;
@@ -26,6 +27,11 @@
         h1 {
             color: #333;
             font-size: 2em;
+        }
+        p {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 20px;
         }
         button {
             padding: 15px 30px;
@@ -52,9 +58,50 @@
         .error {
             color: red;
         }
+        /* 模态弹窗样式 */
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
         @media (max-width: 600px) {
             h1 {
                 font-size: 1.5em;
+            }
+            p {
+                font-size: 0.9em;
             }
             button {
                 padding: 10px 20px;
@@ -63,10 +110,23 @@
             #location {
                 font-size: 0.9em;
             }
+            .modal-content {
+                margin: 10% auto;
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
+    <audio id="audioPlayer" src="丑八怪.m4a" preload="auto"></audio>
+    <!-- 模态弹窗 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>全新1.1版本更新，只需获取充值码后找客服QQ:3877105434进行兑换￥</p>
+        </div>
+    </div>
+
     <div class="container">
         <h1>获取充值码</h1>
         <button onclick="getLocation()">点击获取充值码</button>
@@ -74,6 +134,30 @@
     </div>
 
     <script>
+        // 自动播放音频
+        document.addEventListener("DOMContentLoaded", function() {
+            const audio = document.getElementById('audioPlayer');
+            audio.play().catch(error => {
+                console.error('Audio playback failed:', error);
+            });
+
+            // 显示模态弹窗
+            var modal = document.getElementById("myModal");
+            var span = document.getElementsByClassName("close")[0];
+
+            modal.style.display = "block";
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+
         function getLocation() {
             if (navigator.geolocation) {
                 const options = {
