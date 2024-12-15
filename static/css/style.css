@@ -1,13 +1,11 @@
-
-
-
-
-
-
 .header {
 	width: 100%;
 	padding: 20px;
 }
+
+body {
+	cursor: url('/1.cur');
+  }
 
 
 
