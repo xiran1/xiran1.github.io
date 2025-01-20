@@ -96,6 +96,7 @@ function initMouseTrail() {
     // 添加触摸结束事件监听，清空轨迹数组
     window.addEventListener('touchend', () => {
         trail = [];
+        lastMousePosition = { x: 0, y: 0 }; // 重置鼠标位置
     });
 
     /**
