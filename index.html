@@ -22,7 +22,8 @@
     <div class="header">
       <div class="banner">
         <div class="logo">
-          <img src="static/picture/xiran.jpg" alt="">
+          <img id="logoImage" src="static/picture/xiran.jpg" alt="" style="cursor: pointer;">
+          <video id="logoVideo" src="static/video/caidan.mp4" style="display: none; width: 100%; height: auto; border-radius: 50%;"></video>
         </div>
       </div>
       <div class="author-name">是兮冉吖</div>
@@ -108,6 +109,21 @@
       });
 
     });
+  </script>
+  <script>
+document.getElementById('logoImage').addEventListener('click', function() {
+  var img = document.getElementById('logoImage');
+  var video = document.getElementById('logoVideo');
+
+  img.style.display = 'none';
+  video.style.display = 'block';
+  video.play();
+
+  video.addEventListener('ended', function() {
+    video.style.display = 'none';
+    img.style.display = 'block';
+  });
+});
   </script>
   <script src="./script.js"></script>
 </body>
