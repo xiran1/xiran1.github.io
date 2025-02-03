@@ -31,10 +31,19 @@
     }
 
     @keyframes fall {
-      0% { transform: translate(0, 0) scale(1); opacity: 1; }
-      50% { transform: translate(calc(-50px + calc(100px * var(--dx))), calc(20px + calc(100px * var(--dy)))) scale(1.5); opacity: 1; }
-      100% { transform: translate(calc(-50vw + calc(100vw * var(--dx))), calc(100vh + 20px)) scale(0); opacity: 0; } // 修改: 使糖果掉出屏幕并对称
-    }
+  0% { 
+    transform: translate(0, 0) scale(1); 
+    opacity: 1; 
+  }
+  50% { 
+    transform: translate(calc(-50px + calc(100px * var(--dx))), calc(20px + calc(100px * var(--dy)))) scale(1.5); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translate(calc(-50vw + calc(100vw * var(--dx))), calc(100vh + 20px)) scale(0); 
+    opacity: 0; 
+  }
+}
 
     /* 消息样式 */
     .message {
@@ -170,7 +179,7 @@
             message.style.display = 'none';
             playVideo();
           }, 1000);
-        }, 2000);
+        }, 1000);
       }
 
       // 播放视频
