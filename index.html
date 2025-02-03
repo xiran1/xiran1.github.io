@@ -13,6 +13,46 @@
   <link href="static/css/m.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="static/css/style.css">
   <link rel="stylesheet" href="./style.css">
+  <style>
+    /* 禁止文本选择 */
+    body {
+      user-select: none;
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+    }
+
+    /* 糖果样式 */
+    .candy {
+      position: absolute;
+      font-size: 20px;
+      opacity: 0;
+      animation: fall ease-in-out 2s forwards; /* 修改: 增加缓动函数并延长动画时间 */
+    }
+
+    @keyframes fall {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      50% { transform: translate(calc(-50px + calc(100px * var(--dx))), calc(20px + calc(100px * var(--dy)))) scale(1.5); opacity: 1; }
+      100% { transform: translate(calc(-50vw + calc(100vw * var(--dx))), calc(100vh + 20px)) scale(0); opacity: 0; } // 修改: 使糖果掉出屏幕并对称
+    }
+
+    /* 消息样式 */
+    .message {
+      position: absolute;
+      top: calc(10% - 50px);
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      opacity: 0;
+      transition: opacity 1s;
+      z-index: 1000;
+      text-align: center;
+    }
+  </style>
   <script src="static/js/jquery.min.js"></script>
 </head>
 
@@ -21,7 +61,7 @@
   <div id="app">
     <div class="header">
       <div class="banner">
-        <div class="logo">
+        <div class="logo" id="logoContainer">
           <img id="logoImage" src="static/image/xiran.jpg" alt="" style="cursor: pointer;">
           <video id="logoVideo" src="static/video/caidan.mp4" style="display: none; width: 100%; height: auto; border-radius: 50%;"></video>
         </div>
@@ -50,7 +90,6 @@
             <p class="app-name">企鹅最新群</p>
           </div>
         </a>
-        </a>
         <a href="https://www.123pan.com/s/xGiBTd-gNwld.html" class="item" style="opacity: 1;">
           <div class="content-wrap">
             <div class="img-wrap">
@@ -70,24 +109,90 @@
       </div>
     </div>
   </div>
+  <div id="message" class="message">小声BB: 这个兮冉真不是人，把群卖了，见钱眼开。</div>
+  <audio id="candySound" src="/static/media/ye.mp3" preload="auto"></audio>
   <script>
-    document.addEventListener('copy', function(e) {
-        e.preventDefault(); // 阻止复制事件的默认行为
-        e.clipboardData.setData('text/plain', ''); // 设置剪贴板内容为空
-    });
-    // 禁用右键菜单
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
-    // 禁用拖放
-    document.addEventListener('dragstart', function(e) {
-        e.preventDefault();
-    });
-    // 禁用键盘快捷键复制（Ctrl+C, Command+C）
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
-            e.preventDefault();
+    document.addEventListener('DOMContentLoaded', function() {
+      // 阻止复制
+      document.addEventListener('copy', function(e) {
+          e.preventDefault(); // 阻止复制事件的默认行为
+          e.clipboardData.setData('text/plain', ''); // 设置剪贴板内容为空
+      });
+
+      // 禁用右键菜单
+      document.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+      });
+
+      // 禁用拖放
+      document.addEventListener('dragstart', function(e) {
+          e.preventDefault();
+      });
+
+      // 禁用键盘快捷键复制（Ctrl+C, Command+C）
+      document.addEventListener('keydown', function(e) {
+          if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C')) {
+              e.preventDefault();
+          }
+      });
+
+      // 糖果动画
+      function createCandies() {
+        const logoContainer = document.getElementById('logoContainer');
+        const rect = logoContainer.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const candySound = document.getElementById('candySound');
+
+        candySound.play();
+
+        for (let i = 0; i < 50; i++) {
+          const candy = document.createElement('span');
+          candy.classList.add('candy');
+          candy.textContent = '🍬';
+          candy.style.left = centerX + 'px';
+          candy.style.top = centerY + 'px';
+          candy.style.setProperty('--dx', Math.random() * 2 - 1);
+          candy.style.setProperty('--dy', Math.random());
+          document.body.appendChild(candy);
+          setTimeout(() => candy.remove(), 2000);
         }
+      }
+
+      // 显示消息
+      function showMessage() {
+        const message = document.getElementById('message');
+        message.style.display = 'block';
+        message.style.opacity = 1;
+        setTimeout(() => {
+          message.style.opacity = 0;
+          setTimeout(() => {
+            message.style.display = 'none';
+            playVideo();
+          }, 1000);
+        }, 2000);
+      }
+
+      // 播放视频
+      function playVideo() {
+        const img = document.getElementById('logoImage');
+        const video = document.getElementById('logoVideo');
+
+        img.style.display = 'none';
+        video.style.display = 'block';
+        video.play();
+
+        video.addEventListener('ended', function() {
+          video.style.display = 'none';
+          img.style.display = 'block';
+        });
+      }
+
+      // 绑定点击事件
+      document.getElementById('logoImage').addEventListener('click', function() {
+        createCandies();
+        showMessage();
+      });
     });
   </script>
   <script>
@@ -95,36 +200,18 @@
       $(".a1").css("display", "flex");
       $(".a2").css("display", "none");
       $(".a3").css("display", "none");
-      $(document).ready(function() {
-        $(".zy").click(function() {
-          $(".a1").css("display", "flex");
-          $(".a2").css("display", "none");
-          $(".a3").css("display", "none");
-        });
-        // 添加工具按钮点击事件
-        $(".tool").click(function() {
-          $(".a1").css("display", "none");
-          $(".a2").css("display", "flex");
-          $(".a3").css("display", "none");
-        });
+      $(".zy").click(function() {
+        $(".a1").css("display", "flex");
+        $(".a2").css("display", "none");
+        $(".a3").css("display", "none");
       });
-
+      // 添加工具按钮点击事件
+      $(".tool").click(function() {
+        $(".a1").css("display", "none");
+        $(".a2").css("display", "flex");
+        $(".a3").css("display", "none");
+      });
     });
-  </script>
-  <script>
-document.getElementById('logoImage').addEventListener('click', function() {
-  var img = document.getElementById('logoImage');
-  var video = document.getElementById('logoVideo');
-
-  img.style.display = 'none';
-  video.style.display = 'block';
-  video.play();
-
-  video.addEventListener('ended', function() {
-    video.style.display = 'none';
-    img.style.display = 'block';
-  });
-});
   </script>
   <script src="./script.js"></script>
 </body>
